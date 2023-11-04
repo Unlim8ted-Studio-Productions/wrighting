@@ -13,7 +13,42 @@
 <button onclick="loadText()">Load</button>
 
 <script>
+    // Function to set a cookie with the given name and value
+    function setCookie(name, value) {
+        document.cookie = `${name}=${value}; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/`;
+    }
+
+    // Function to get the value of a cookie by name
+    function getCookie(name) {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.startsWith(name + '=')) {
+                return cookie.substring(name.length + 1);
+            }
+        }
+        return null;
+    }
+
+    // Function to save the text to a cookie
+    function saveTextToCookies() {
+        var textToSave = document.getElementById('textArea').value;
+        setCookie('savedText', textToSave);
+        alert('Text saved to cookie!');
+    }
+
+    // Function to load the text from a cookie
+    function loadTextfromCookies() {
+        var savedText = getCookie('savedText');
+        if (savedText !== null) {
+            document.getElementById('textArea').value = savedText;
+            alert('Text loaded from cookie!');
+        } else {
+            alert('No saved text found.');
+        }
+    }
     function saveText() {
+        saveTextToCookies();
         var textToSave = document.getElementById('textArea').value;
         var blob = new Blob([textToSave], { type: 'text/plain' });
         var a = document.createElement('a');
@@ -42,6 +77,10 @@
 
         input.click();
     }
+        // Load the text from the cookie when the page loads
+    window.onload = function () {
+        loadTextfromCookies();
+    };
 </script>
 
 </body>

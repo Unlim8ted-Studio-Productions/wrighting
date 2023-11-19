@@ -14,6 +14,7 @@
 
 <button onclick="saveText()">Save</button>
 <button onclick="loadText()">Load</button>
+    <button onclick="loadTextbrowser()">LoadWithUI</button>
 
 <label for="kindleFile">Load Kindle File:</label>
 <input type="text" id="kindleFile" accept="text/plain">
@@ -56,6 +57,30 @@
         }
     }
 
+    function loadTextbrowser() {
+        var input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'text/plain';
+
+        input.onchange = function (event) {
+            var file = event.target.files[0];
+            if (!file) {
+                return;
+            }
+
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById('textArea').value = e.target.result;
+            };
+            reader.readAsText(file);
+        };
+
+        input.click();
+    }
+        // Load the text from the cookie when the page loads
+    window.onload = function () {
+        loadTextfromCookies();
+    };
     function saveText() {
         saveTextToCookies();
         var textToSave = document.getElementById('textArea').value;

@@ -7,10 +7,16 @@
 </head>
 <body>
 
+<label for="fileName">Save As:</label>
+<input type="text" id="fileName" placeholder="Enter file name">
+
 <textarea id="textArea" rows="10" cols="30"></textarea><br>
 
 <button onclick="saveText()">Save</button>
 <button onclick="loadText()">Load</button>
+
+<label for="kindleFile">Load Kindle File:</label>
+<input type="file" id="kindleFile" accept="text/plain">
 
 <script>
     // Function to set a cookie with the given name and value
@@ -33,13 +39,15 @@
     // Function to save the text to a cookie
     function saveTextToCookies() {
         var textToSave = document.getElementById('textArea').value;
-        setCookie('savedText', textToSave);
+        var fileName = document.getElementById('fileName').value || 'textfile'; // Default to 'textfile' if no name is provided
+        setCookie(fileName, textToSave);
         alert('Text saved to cookie!');
     }
 
     // Function to load the text from a cookie
     function loadTextfromCookies() {
-        var savedText = getCookie('savedText');
+        var fileName = document.getElementById('fileName').value || 'textfile'; // Default to 'textfile' if no name is provided
+        var savedText = getCookie(fileName);
         if (savedText !== null) {
             document.getElementById('textArea').value = savedText;
             alert('Text loaded from cookie!');
@@ -47,37 +55,32 @@
             alert('No saved text found.');
         }
     }
+
     function saveText() {
         saveTextToCookies();
         var textToSave = document.getElementById('textArea').value;
+        var fileName = document.getElementById('fileName').value || 'textfile'; // Default to 'textfile' if no name is provided
         var blob = new Blob([textToSave], { type: 'text/plain' });
         var a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = 'textfile.txt';
+        a.download = fileName + '.txt';
         a.click();
     }
 
     function loadText() {
-        var input = document.createElement('input');
-        input.type = 'file';
-        input.accept = 'text/plain';
-
-        input.onchange = function (event) {
-            var file = event.target.files[0];
-            if (!file) {
-                return;
-            }
-
+        loadTextfromCookies();
+        var input = document.getElementById('kindleFile');
+        var file = input.files[0];
+        if (file) {
             var reader = new FileReader();
             reader.onload = function (e) {
                 document.getElementById('textArea').value = e.target.result;
             };
             reader.readAsText(file);
-        };
-
-        input.click();
+        }
     }
-        // Load the text from the cookie when the page loads
+
+    // Load the text from the cookie when the page loads
     window.onload = function () {
         loadTextfromCookies();
     };
